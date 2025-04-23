@@ -86,6 +86,7 @@ require("lazy").setup({
 				}
 				lspconfig.ts_ls.setup {}
 				lspconfig.pyright.setup {}
+				lspconfig.emmet_ls.setup {}
 			end
 		},
 		{
@@ -124,6 +125,10 @@ require("lazy").setup({
 			---@module "ibl"
 			---@type ibl.config
 			opts = {},
+		},
+		{
+			'stevearc/conform.nvim',
+			opts = {},
 		}
 	},
 	-- Configure any other settings here. See the documentation for more details.
@@ -133,20 +138,37 @@ require("lazy").setup({
 	checker = { enabled = true },
 })
 require('nvim-treesitter.install').compilers = { 'gcc' }
+require("conform").setup({
+	formatters_by_ft = {
+		--lua = { "stylua" },
+		-- Conform will run multiple formatters sequentially
+		--python = { "isort", "black" },
+		-- You can customize some of the format options for the filetype (:help conform.format)
+		--rust = { "rustfmt", lsp_format = "fallback" },
+		-- Conform will run the first available formatter
+		javascript = { "prettierd", "prettier", stop_after_first = true },
+		html = { 'prettier' },
+	},
+})
+
 vim.keymap.set('n', '<leader>e', ':NvimTreeToggle<CR>', { noremap = true, silent = true })
 vim.keymap.set('n', 'gd', vim.lsp.buf.definition)
 vim.keymap.set('n', 'K', vim.lsp.buf.hover)
 vim.keymap.set('n', '<leader>rn', vim.lsp.buf.rename)
 vim.keymap.set('n', '<leader>ca', vim.lsp.buf.code_action)
 vim.keymap.set("n", "<leader>F", function()
-	vim.lsp.buf.format({ async = true })
+	require("conform").format()
 end, { desc = "Format file" })
+vim.keymap.set("n", "<leader>LF", function()
+	vim.lsp.buf.format({ async = true })
+end, { desc = "Format file (LSP)" })
+
 -- Copy to clipboard
-vim.keymap.set({'n', 'v'}, '<leader>y', '"+y')
+vim.keymap.set({ 'n', 'v' }, '<leader>y', '"+y')
 vim.keymap.set('n', '<leader>Y', '"+Y')
 
 -- Paste from clipboard
-vim.keymap.set({'n', 'v'}, '<leader>p', '"+p')
+vim.keymap.set({ 'n', 'v' }, '<leader>p', '"+p')
 vim.keymap.set('n', '<leader>P', '"+P')
 vim.keymap.set('n', 'U', '<C-r>')
 
