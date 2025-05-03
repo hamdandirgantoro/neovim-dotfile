@@ -33,11 +33,20 @@ require("lazy").setup({
 			config = function()
 				local configs = require("nvim-treesitter.configs")
 				configs.setup({
-					ensure_installed = { "c", "lua", "vim", "vimdoc", "query", "elixir", "heex", "javascript", "html" },
+					ensure_installed = { "c", "lua", "vim", "vimdoc", "query", "elixir", "heex", "javascript", "html", "php", "blade" },
 					sync_install = false,
-					highlight = { enable = true },
+					highlight = { enable = true, additional_vim_regex_highlighting = { "blade" } },
 					indent = { enable = true },
 				})
+				local parser_config = require "nvim-treesitter.parsers".get_parser_configs()
+				parser_config.blade = {
+					install_info = {
+						url = "https://github.com/EmranMR/tree-sitter-blade",
+						files = { "src/parser.c" },
+						branch = "main",
+					},
+					filetype = "blade",
+				}
 			end
 		},
 		{ "ellisonleao/gruvbox.nvim", priority = 1000, config = true, opts = ... },
@@ -55,7 +64,32 @@ require("lazy").setup({
 		{
 			"neovim/nvim-lspconfig",
 			config = function()
-				require("lspconfig").lua_ls.setup {}
+				local lspconfig = require("lspconfig")
+				lspconfig.lua_ls.setup {
+					settings = {
+						Lua = {
+							diagnostics = {
+								globals = { "vim" }
+							}
+						}
+					}
+				}
+				lspconfig.ts_ls.setup {
+					root_dir = function()
+						return vim.fn.getcwd()
+					end,
+					filetype = { "javascript", "typescript", "html", "blade" }
+				}
+				lspconfig.pyright.setup {}
+				lspconfig.phpactor.setup {}
+				lspconfig.stimulus_ls.setup {
+					root_dir = function()
+						return vim.fn.getcwd()
+					end
+				}
+				lspconfig.emmet_language_server.setup {
+					filetypes = { "html", "php", "blade", "javascriptreact", "typescriptreact" },
+				}
 				-- You can add more language servers here
 			end,
 		},
@@ -70,23 +104,9 @@ require("lazy").setup({
 			config = function()
 				require("mason").setup()
 				require("mason-lspconfig").setup {
-					ensure_installed = { "lua_ls", "ts_ls", "pyright" }, -- Add your servers here
+					ensure_installed = { "lua_ls", "ts_ls", "pyright", "phpactor", "stimulus_ls", "emmet_language_server" }, -- Add your servers here
 					automatic_installation = true,
 				}
-
-				local lspconfig = require("lspconfig")
-				lspconfig.lua_ls.setup {
-					settings = {
-						Lua = {
-							diagnostics = {
-								globals = { "vim" }
-							}
-						}
-					}
-				}
-				lspconfig.ts_ls.setup {}
-				lspconfig.pyright.setup {}
-				lspconfig.emmet_ls.setup {}
 			end
 		},
 		{
@@ -127,6 +147,19 @@ require("lazy").setup({
 			opts = {},
 		},
 		{
+			'nvim-telescope/telescope.nvim',
+			tag = '0.1.8',
+			-- or                              , branch = '0.1.x',
+			dependencies = { 'nvim-lua/plenary.nvim' },
+			config = function()
+				local builtin = require('telescope.builtin')
+				vim.keymap.set('n', '<leader>ff', builtin.find_files, { desc = 'Telescope find files' })
+				vim.keymap.set('n', '<leader>fg', builtin.live_grep, { desc = 'Telescope live grep' })
+				vim.keymap.set('n', '<leader>fb', builtin.buffers, { desc = 'Telescope buffers' })
+				vim.keymap.set('n', '<leader>fh', builtin.help_tags, { desc = 'Telescope help tags' })
+			end
+		},
+		{
 			'stevearc/conform.nvim',
 			opts = {},
 		}
@@ -137,7 +170,18 @@ require("lazy").setup({
 	-- automatically check for plugin updates
 	checker = { enabled = true },
 })
-require('nvim-treesitter.install').compilers = { 'gcc' }
+--vim.filetype.add({
+--	extension = {
+--		['blade.php'] = 'blade',
+--	}
+--})
+
+vim.filetype.add({
+	pattern = {
+		[".*%.blade%.php"] = "blade",
+	},
+})
+
 require("conform").setup({
 	formatters_by_ft = {
 		--lua = { "stylua" },
@@ -148,20 +192,38 @@ require("conform").setup({
 		-- Conform will run the first available formatter
 		javascript = { "prettierd", "prettier", stop_after_first = true },
 		html = { 'prettier' },
+		php = { 'pint' },
+		blade = { 'blade-formatter' }
 	},
 })
 
+vim.keymap.set('n', '<leader>/', ':noh<CR>')
 vim.keymap.set('n', '<leader>e', ':NvimTreeToggle<CR>', { noremap = true, silent = true })
 vim.keymap.set('n', 'gd', vim.lsp.buf.definition)
 vim.keymap.set('n', 'K', vim.lsp.buf.hover)
 vim.keymap.set('n', '<leader>rn', vim.lsp.buf.rename)
 vim.keymap.set('n', '<leader>ca', vim.lsp.buf.code_action)
-vim.keymap.set("n", "<leader>F", function()
-	require("conform").format()
-end, { desc = "Format file" })
-vim.keymap.set("n", "<leader>LF", function()
-	vim.lsp.buf.format({ async = true })
-end, { desc = "Format file (LSP)" })
+--vim.keymap.set("n", "<leader>fo", function()
+--	require("conform").format({
+--		timeout_ms = 10000000
+--	})
+--end, { desc = "Format file" })
+--vim.keymap.set("n", "<leader>lfo", function()
+--	vim.lsp.buf.format({ async = true })
+--end, { desc = "Format file (LSP)" })
+vim.keymap.set("n", "<leader>fo", function()
+	local conform = require("conform")
+
+	-- Check if Conform has a formatter for the current filetype
+	local filetype = vim.bo.filetype
+	local formatters = conform.list_formatters_for_buffer(0)
+
+	if #formatters > 0 then
+		conform.format({ timeout_ms = 10000 }) -- adjust timeout as needed
+	else
+		vim.lsp.buf.format({ async = true })
+	end
+end, { desc = "Format file (Conform or LSP fallback)" })
 
 -- Copy to clipboard
 vim.keymap.set({ 'n', 'v' }, '<leader>y', '"+y')
