@@ -202,3 +202,14 @@ require("toggleterm").setup {
 -- Optional: plugin for maximize functionality
 -- You can install 'szw/vim-maximizer' for <leader>wm
 -- use 'szw/vim-maximizer' in your plugin manager
+-- require('custom_features.devel.embedded_language_support')
+-- function _G.Reload()
+--   package.loaded['custom_features.devel.embedded_language_support'] = nil
+--   return require('custom_features.devel.embedded_language_support')
+-- end
+--
+-- vim.api.nvim_create_user_command("Reload", function()
+--   Reload()
+-- end, { })
+--
+-- vim.keymap.set('n', '<leader>dr', Reload(), { desc = 'development reload' })
