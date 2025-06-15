@@ -1,5 +1,4 @@
-local telescope = require("telescope.builtin")
-
+local telescope, dapui, dap = require("telescope.builtin"), require("dapui"), require("dap")
 -- Files
 vim.keymap.set('n', '<leader>ff', telescope.find_files, { desc = 'Find File' })
 vim.keymap.set('n', '<leader>fr', telescope.oldfiles, { desc = 'Recent Files' })
@@ -25,7 +24,7 @@ vim.keymap.set('n', '<leader>pf', telescope.git_files, { desc = 'Project Files (
 vim.keymap.set('n', '<leader>lr', telescope.lsp_references, { desc = 'LSP References' })
 vim.keymap.set('n', '<leader>ld', telescope.lsp_definitions, { desc = 'LSP Definitions' })
 
-vim.keymap.set('n', '<leader>nh', ':noh<CR>', {desc = 'no highlights'})
+vim.keymap.set('n', '<leader>nh', ':noh<CR>', { desc = 'no highlights' })
 vim.keymap.set('n', '<leader>ft', ':NvimTreeToggle<CR>', { desc = 'toggle file tree', noremap = true, silent = true })
 vim.keymap.set('n', '<leader>gd', vim.lsp.buf.definition)
 vim.keymap.set('n', 'K', vim.lsp.buf.hover)
@@ -57,6 +56,14 @@ end, { desc = "Format file" })
 -- Copy to clipboard
 -- vim.keymap.set({ 'n', 'v' }, '<leader>y', '"+y')
 vim.keymap.set('v', '<leader>Y', '"+y')
+
+-- debug adapter ui
+vim.keymap.set('n', '<leader>db', function() dapui.toggle() end, { desc = "toggle dap ui" })
+vim.keymap.set('n', '<leader>dp', function() dap.toggle_breakpoint() end, { desc = "toggle debug breakpoint" })
+vim.keymap.set('n', '<leader>dl', function() dap.continue() end, { desc = "toggle debug breakpoint" })
+vim.keymap.set('n', '<leader>dl', function() dap.step_over() end, { desc = "toggle debug breakpoint" })
+vim.keymap.set('n', '<leader>dl', function() dap.step_into() end, { desc = "toggle debug breakpoint" })
+vim.keymap.set('n', '<leader>dl', function() dap.repl.open() end, { desc = "toggle debug breakpoint" })
 
 -- Paste from clipboard
 --vim.keymap.set({ 'n', 'v' }, '<leader>p', '"+p', { desc = "copy to clipboard" })
