@@ -19,6 +19,6 @@ vim.opt.rtp:prepend(lazypath)
 
 require("lazy").setup({
 	import = 'plugins',
-	-- install = { colorscheme = { "kanagawa-dragon" } },
+	-- install = { colorscheme = { "gruvbox" } },
 	checker = { enabled = true },
 })

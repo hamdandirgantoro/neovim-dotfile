@@ -114,7 +114,9 @@ vim.keymap.set('n', '<leader>gr', '<cmd>Gitsigns reset_hunk<CR>', { desc = 'Rese
 vim.keymap.set('n', '<leader>gS', '<cmd>Gitsigns stage_hunk<CR>', { desc = 'Stage hunk' })
 
 --toggle terminal
-vim.keymap.set({ "n", "t" }, "<leader>tt", "<cmd>ToggleTerm<CR>", { desc = "Toggle Terminal" })
+vim.keymap.set({ "n" }, "<leader>tt", "<cmd>ToggleTerm<CR>", { desc = "Toggle Terminal" })
+vim.keymap.set({ "t" }, "<Esc>", "<cmd>ToggleTerm<CR>", { desc = "Toggle Terminal" })
+vim.keymap.set({ "t" }, "<C-q>", "<cmd>ToggleTerm<CR>", { desc = "Toggle Terminal" })
 
 --navigation
 -- vim.keymap.set("i", "<C-h>", "<Left>")

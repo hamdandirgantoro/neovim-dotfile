@@ -20,11 +20,32 @@ return {
 			root_dir = function()
 				return vim.fn.getcwd()
 			end,
+			init_options = {
+				includeLanguages = {
+					"blade"
+				}
+			}
 		}
 		lspconfig.emmet_language_server.setup {
 			filetypes = { "html", "php", "blade", "javascriptreact", "typescriptreact" },
+			root_dir = function()
+				return vim.fn.getcwd()
+			end,
+			init_options = {
+				includeLanguages = {
+					blade = "html"
+				}
+			}
 		}
-		lspconfig.intelephense.setup {}
+		lspconfig.intelephense.setup {
+			filetypes = { 'blade', 'php' },
+			root_dir = function()
+				return vim.fn.getcwd()
+			end,
+			settings = {
+				filetypes = { 'blade', 'php' },
+			}
+		}
 		lspconfig.cssls.setup {}
 		lspconfig.css_variables.setup {}
 		lspconfig.cssmodules_ls.setup {}

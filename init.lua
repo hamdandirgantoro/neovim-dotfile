@@ -1,3 +1,11 @@
+vim.filetype.add({
+	pattern = {
+		[".*%.blade%.php"] = "blade",
+	},
+	extension = {
+		blade = 'blade'
+	}
+})
 require('lazy-init')
 require('config')
 require('keymaps')
