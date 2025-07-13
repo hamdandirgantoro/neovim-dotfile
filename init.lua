@@ -1,3 +1,23 @@
+if require('helpers.file_exist').check('artisan') then
+	vim.system({
+		"sh", "-c",
+		"ls routes/* | entr -n sh -c 'php artisan route:list --json > /tmp/laravelroutes.json'"
+	}, { detach = true })
+	vim.system({
+		"sh", "-c",
+		[[inotifywait -r -m /home/hamdan/php-shell/shop/resources/views -e create -e moved_to -e delete |
+    while read path action file; do
+        find resources/views -type f -name "*.blade.php" | sed -E 's|^resources/views/||; s|\.blade\.php$||; s|/|.|g' > /tmp/laraview
+        # do something with the file
+    done]]
+	}, { detach = true })
+
+	vim.system({
+		"sh", "-c",
+		[[find resources/views -type f -name "*.blade.php" | sed -E 's|^resources/views/||; s|\.blade\.php$||; s|/|.|g' > /tmp/laraview]]
+	}, { detach = true })
+end
+
 vim.filetype.add({
 	pattern = {
 		[".*%.blade%.php"] = "blade",
@@ -237,7 +257,9 @@ require("toggleterm").setup {
 	-- see :h nvim_open_win for details on borders however
 	-- the 'curved' border is a custom border type
 	-- not natively supported but implemented in this plugin.
-	-- border = 'single' | 'double' | 'shadow' | 'curved' | ... other options supported by win open
+	float_opts = {
+		border = "rounded", -- ← this enables rounded borders
+	},
 	-- like `size`, width, height, row, and col can be a number or function which is passed the current terminal
 	-- width = <value>,
 	-- height = <value>,
