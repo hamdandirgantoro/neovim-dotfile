@@ -4,10 +4,13 @@ return {
 	config = function()
 		local configs = require("nvim-treesitter.configs")
 		configs.setup({
-			ensure_installed = { "c", "lua", "vim", "vimdoc", "query", "elixir", "heex", "javascript", "html", "php", "php_only", "blade" },
+			ensure_installed = { "c", "lua", "vim", "vimdoc", "query", "elixir", "heex", "javascript", "html", "php", "php_only", "blade", "tsx", "typescript" },
 			sync_install = false,
 			highlight = { enable = true, additional_vim_regex_highlighting = false },
 			indent = { enable = true },
+			autotag = {
+				enable = true
+			},
 		})
 		local parser_config = require "nvim-treesitter.parsers".get_parser_configs()
 		parser_config.blade = {
