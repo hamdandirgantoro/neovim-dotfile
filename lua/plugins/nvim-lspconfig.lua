@@ -14,7 +14,21 @@ return {
 		lspconfig.ts_ls.setup {
 			-- filetype = { "javascript", "typescript" }
 		}
-		lspconfig.pyright.setup {}
+		if true then
+			lspconfig.pyright.setup { cmd = { "docker", "exec", "-i", "kasir-next-js-backend-1", "pyright-langserver", "--stdio" },
+				before_init = function(params)
+					params.processId = vim.NIL
+				end,
+				root_dir = lspconfig.util.root_pattern(
+					"pyrightconfig.json",
+					"requirements.txt",
+					".git"
+				),
+			}
+		else
+			lspconfig.pyright.setup {}
+		end
+		-- lspconfig.pyright.setup {}
 		lspconfig.html.setup {
 			filetypes = { "html", "blade", "templ", "php" },
 			root_dir = function()

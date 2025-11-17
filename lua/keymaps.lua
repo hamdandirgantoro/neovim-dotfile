@@ -118,6 +118,9 @@ vim.keymap.set({ "n" }, "<leader>tt", "<cmd>ToggleTerm<CR>", { desc = "Toggle Te
 vim.keymap.set({ "t" }, "<Esc>", "<cmd>ToggleTerm<CR>", { desc = "Toggle Terminal" })
 vim.keymap.set({ "t" }, "<C-q>", "<cmd>ToggleTerm<CR>", { desc = "Toggle Terminal" })
 
+--trouble
+vim.keymap.set({"n"}, "<leader>td", "<cmd>Trouble diagnostics<CR>",{desc = "Trouble Diagnostics"})
+
 --navigation
 -- vim.keymap.set("i", "<C-h>", "<Left>")
 -- vim.keymap.set("i", "<C-j>", "<Down>")
